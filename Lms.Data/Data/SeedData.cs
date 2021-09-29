@@ -28,6 +28,7 @@ namespace Lms.Data.Data
                         StartDate = DateTime.Now.AddDays(faker.Random.Int(-3, 3))
 
                     });
+                    
                 }
 
                 courses.Add(new Course
@@ -35,8 +36,9 @@ namespace Lms.Data.Data
                     Title = faker.Commerce.ProductName(),
                     StartDate = DateTime.Now.AddDays(faker.Random.Int(-3, 3)),
                     Modules = modules
-
+                    
                 });
+                
 
             }
 

@@ -13,6 +13,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Lms.Data.Data;
+using Lms.Core.Repositories;
+using Lms.Data.Repositories;
+using Newtonsoft.Json;
 
 namespace Lms.Api
 {
@@ -30,9 +33,15 @@ namespace Lms.Api
         {
 
             services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
-                .AddNewtonsoftJson()
+                .AddNewtonsoftJson(opt=>opt.SerializerSettings.ReferenceLoopHandling=ReferenceLoopHandling.Ignore)
                 .AddXmlDataContractSerializerFormatters();
-            
+
+            services.AddAutoMapper(typeof(MapperProfile));
+
+            services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IModuleRepository, ModuleRepository>();
+            services.AddScoped<IUoW, UoW>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Lms.Api", Version = "v1" });
