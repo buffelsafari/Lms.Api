@@ -45,13 +45,14 @@ namespace Lms.Data.Repositories
             return await context.Module.ToListAsync();            
         }
 
-        public async Task<Module> GetModule(int? id)
+        public async Task<IEnumerable<Module>> GetModule(string name)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(name))
             {
                 return null;
             }
-            return await context.Module.FindAsync(id);            
+            return await context.Module.Where(m => m.Title == name).ToListAsync();
+                                   
         }
 
         public void Remove(Module module)

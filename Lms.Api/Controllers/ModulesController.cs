@@ -84,17 +84,17 @@ namespace Lms.Api.Controllers
         }
 
         // GET: api/Modules/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ModuleDto>> GetModule(int id)
+        [HttpGet("{name}")]
+        public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModule(string name)
         {
-            var module = await uow.ModuleRepository.FindAsync(id);
+            var modules = await uow.ModuleRepository.GetModule(name);
 
-            if (module == null)
+            if (modules == null)
             {
                 return NotFound();
             }
 
-            return Ok(mapper.Map<ModuleDto>(module));
+            return Ok(mapper.Map<IEnumerable<ModuleDto>>(modules));
         }
 
         // PUT: api/Modules/5
