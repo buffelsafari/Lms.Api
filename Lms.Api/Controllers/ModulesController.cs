@@ -46,18 +46,22 @@ namespace Lms.Api.Controllers
                 return NotFound();
             }
 
-            return mapper.Map<ModuleDto>(module);
+            return Ok(mapper.Map<ModuleDto>(module));
         }
 
         // PUT: api/Modules/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutModule(int id, Module module)
+        public async Task<IActionResult> PutModule(int id, ModuleDto moduleDto)
         {
-            if (id != module.Id)
+            
+            if (!TryValidateModel(moduleDto))
             {
                 return BadRequest();
             }
+
+            Module module = mapper.Map<Module>(moduleDto);
+            module.Id = id;
 
             uow.ModuleRepository.Update(module);
             try
@@ -72,22 +76,29 @@ namespace Lms.Api.Controllers
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500);                    
                 }
             }
             
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Modules
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ModuleDto>> PostModule(Module module)
+        public async Task<ActionResult<ModuleDto>> PostModule(ModuleDto moduleDto)
         {
+            if (!TryValidateModel(moduleDto))
+            {
+                return BadRequest();
+            }
+
+            Module module = mapper.Map<Module>(moduleDto);
+            
             uow.ModuleRepository.Add(module);
             await uow.CompleteAsync();
 
-            return CreatedAtAction("GetModule", new { id = module.Id }, mapper.Map<ModuleDto>(module));
+            return Ok(CreatedAtAction("GetModule", new { id = module.Id }, mapper.Map<ModuleDto>(module)));
         }
 
         // DELETE: api/Modules/5
@@ -103,7 +114,7 @@ namespace Lms.Api.Controllers
             uow.ModuleRepository.Remove(module);
             await uow.CompleteAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private async Task<bool> ModuleExists(int id)

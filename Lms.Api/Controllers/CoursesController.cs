@@ -51,14 +51,17 @@ namespace Lms.Api.Controllers
         // PUT: api/Courses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCourse(int id, Course course)
-        {
-            if (id != course.Id)
+        public async Task<IActionResult> PutCourse(int id, CourseDto courseDto)
+        {            
+            if (!TryValidateModel(courseDto))
             {
                 return BadRequest();
             }
 
-            uow.CourseRepository.Update(course);
+            Course c = mapper.Map<Course>(courseDto);
+            c.Id = id;
+
+            uow.CourseRepository.Update(c);
 
             try
             {
@@ -72,18 +75,25 @@ namespace Lms.Api.Controllers
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500);                    
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Courses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CourseDto>> PostCourse(Course course)
+        public async Task<ActionResult<CourseDto>> PostCourse(CourseDto courseDto)
         {
+            if (!TryValidateModel(courseDto))
+            {
+                return BadRequest();
+            }
+
+            Course course = mapper.Map<Course>(courseDto);
+            
             uow.CourseRepository.Add(course);
             await uow.CompleteAsync();
                        
@@ -104,7 +114,7 @@ namespace Lms.Api.Controllers
             uow.CourseRepository.Remove(course);
             await uow.CompleteAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private async Task<bool> CourseExists(int id)
