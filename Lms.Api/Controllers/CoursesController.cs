@@ -76,9 +76,9 @@ namespace Lms.Api.Controllers
 
         // GET: api/Courses
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourse()
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCourse(bool includeModules)
         {            
-            return Ok(mapper.Map<IEnumerable<CourseDto>>(await uow.CourseRepository.GetAllCourses()));
+            return Ok(mapper.Map<IEnumerable<CourseDto>>(await uow.CourseRepository.GetAllCourses(includeModules)));
         }
 
         // GET: api/Courses/5

@@ -41,10 +41,18 @@ namespace Lms.Data.Repositories
             return await context.Course.FindAsync(id);            
         }
 
-        public async Task<IEnumerable<Course>> GetAllCourses()
+        public async Task<IEnumerable<Course>> GetAllCourses(bool includeModules)
         {
-            return await context.Course.ToListAsync();
-
+            var baseSet = context.Course;
+            
+            if (includeModules)
+            {
+                return await baseSet.Include(c => c.Modules).ToListAsync();
+            }
+            else
+            {
+                return await baseSet.ToListAsync();
+            }
             
         }
 
